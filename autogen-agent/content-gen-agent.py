@@ -232,3 +232,9 @@ llm_config_content_assistant = {
     ],
     'config_list': config_list
 }
+
+writing_assistant = autogen.AssistantAgent(
+    name='writing_assistant',
+    system_message='You are a writing assistant, you can use research function to collect latest information about a given topic, and then use write_content function to write a very well written content; Reply TERMINATE when your task is done',
+    llm_config=llm_config_content_assistant,
+)
