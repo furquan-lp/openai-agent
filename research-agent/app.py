@@ -96,3 +96,19 @@ def summary(objective, content):
 
     output = summary_chain.run(input_documents=docs, objective=objective)
     return output
+
+class ScrapeWebsiteInput(BaseModel):
+    """Inputs for scrape_website function"""
+    objective: str = Field(description="The objective & task that users give to the agent")
+    url: str = Field(description="The url of the website to be scraped")
+
+class ScrapeWebsiteTool(BaseTool):
+    name = "scrape_website"
+    description = "When data is needed from a website URL, passing both the URL and the objective for the prompt to the function"
+    args_schema: Type[BaseModel] = ScrapeWebsiteInput
+
+    def _run(self, objective: str, url: str):
+        return scrape_website(objective, url)
+    
+    def _arun(self, url: str):
+        raise NotImplementedError("Functionality not implemented yet")
