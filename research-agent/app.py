@@ -104,7 +104,7 @@ class ScrapeWebsiteInput(BaseModel):
 
 class ScrapeWebsiteTool(BaseTool):
     name = "scrape_website"
-    description = "When data is needed from a website URL, passing both the URL and the objective for the prompt to the function"
+    description = "When data is needed from a website URL, passing both the URL and the objective for the prompt to the function."
     args_schema: Type[BaseModel] = ScrapeWebsiteInput
 
     def _run(self, objective: str, url: str):
@@ -112,3 +112,12 @@ class ScrapeWebsiteTool(BaseTool):
     
     def _arun(self, url: str):
         raise NotImplementedError("Functionality not implemented yet")
+
+tools = [
+    Tool(
+        name="Search",
+        func=search,
+        description="Useful for when you need to answer questions about current events, data. You should ask targeted questions."
+    ),
+    ScrapeWebsiteTool()
+]
