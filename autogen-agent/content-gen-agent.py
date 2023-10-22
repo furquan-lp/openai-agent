@@ -193,3 +193,42 @@ def write_content(research_material, topic):
         'Give me the blog that just generated again, return ONLY the blog, and add TERMINATE in the end of the message', manager)
 
     return user_proxy.last_message()['content']
+
+
+llm_config_content_assistant = {
+    'functions': [
+        {
+            'name': 'research',
+            'description': 'research about a given topic, return the research material including reference links',
+            'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'query': {
+                            'type': 'string',
+                            'description': 'The topic to be researched about',
+                        }
+                    },
+                'required': ['query'],
+            },
+        },
+        {
+            'name': 'write_content',
+            'description': 'Write content based on the given research material & topic',
+            'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'research_material': {
+                            'type': 'string',
+                            'description': 'research material of a given topic, including reference links when available',
+                        },
+                        'topic': {
+                            'type': 'string',
+                            'description': 'The topic of the content',
+                        }
+                    },
+                'required': ['research_material', 'topic'],
+            },
+        },
+    ],
+    'config_list': config_list
+}
