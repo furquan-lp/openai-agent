@@ -31,11 +31,13 @@ def search(query):
         'Content-Type': 'application/json'
     }
 
-    response = requests.request('`POST', url, headers=headers, data=payload)
+    response = requests.request('POST', url, headers=headers, data=payload)
+    print('code was', response.status_code)
+    print('res was', response)
     return response.json()
 
 
-def scrape_website(objective: str, url: str):
+def scrape_website(url: str):
     print('Scraping...')
 
     headers = {
@@ -59,7 +61,7 @@ def scrape_website(objective: str, url: str):
         print('SCRAPED CONTENT:', text)
 
         if len(text) > 8000:
-            output = summary(objective, text)
+            output = summary(text)
             return output
         else:
             return text
@@ -67,7 +69,7 @@ def scrape_website(objective: str, url: str):
         print(f'HTTP request failed with status code {response.status_code}')
 
 
-def summary(objective, content):
+def summary(content):
     llm = ChatOpenAI(temperature=0, model='gpt-3.5-turbo-16k-0613')
 
     text_splitter = RecursiveCharacterTextSplitter(
@@ -75,12 +77,12 @@ def summary(objective, content):
 
     docs = text_splitter.create_documents([content])
     map_prompt = """
-    Write a summary of the following text for {objective}:
+    Write a detailed summary of the following text for a research purpose:
     "{text}"
     SUMMARY:
     """
     map_prompt_template = PromptTemplate(
-        template=map_prompt, input_variables=['text', 'objective'])
+        template=map_prompt, input_variables=['text'])
 
     summary_chain = load_summarize_chain(
         llm=llm,
@@ -90,7 +92,7 @@ def summary(objective, content):
         verbose=True
     )
 
-    output = summary_chain.run(input_documents=docs, objective=objective)
+    output = summary_chain.run(input_documents=docs)
     return output
 
 
@@ -127,7 +129,8 @@ def research(query):
                 },
             },
         ],
-        'config_list': config_list}
+        'config_list': config_list
+    }
 
     researcher = autogen.AssistantAgent(
         name='researcher',
@@ -142,7 +145,7 @@ def research(query):
         human_input_mode='TERMINATE',
         function_map={
             'search': search,
-            'scrape': scrape_website,
+            'scrape_website': scrape_website,
         }
     )
 
@@ -248,4 +251,4 @@ user_proxy = autogen.UserProxyAgent(
 )
 
 user_proxy.initiate_chat(
-    writing_assistant, message='Write a blog post about potential LLMs beyond GPT4')
+    writing_assistant, message='Write a blog about future AI models beyond GPT-4')
