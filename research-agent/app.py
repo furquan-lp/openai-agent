@@ -62,7 +62,12 @@ def scrape_website(objective: str, url: str):
         soup = BeautifulSoup(response.content, 'html.parser') # Extracts the text from the HTML
         text = soup.get_text()
         print('SCRAPED CONTENT:', text)
-        return text
+
+        if len(text) > 10000:
+            output = summary(objective, text)
+            return output
+        else:
+            return text
     else:
         print(f'HTTP request failed with status code {response.status_code}')
 
