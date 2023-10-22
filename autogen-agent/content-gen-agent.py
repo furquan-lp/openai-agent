@@ -33,3 +33,35 @@ def search(query):
 
     response = requests.request('`POST', url, headers=headers, data=payload)
     return response.json()
+
+
+def scrape_website(objective: str, url: str):
+    print('Scraping...')
+
+    headers = {
+        'Cache-Control': 'no-cache',
+        'Content-Type': 'application/json'
+    }
+
+    data = {
+        'url': url
+    }
+
+    data_json = json.dumps(data)
+    # Send the request to Browserless
+    post_url = 'https://chrome.browserless.io/content?token=ce347263-8e76-442e-93b3-db28a0570fcc'
+    response = requests.post(post_url, headers=headers, data=data_json)
+
+    if response.status_code == 200:
+        # Extracts the text from the HTML
+        soup = BeautifulSoup(response.content, 'html.parser')
+        text = soup.get_text()
+        print('SCRAPED CONTENT:', text)
+
+        if len(text) > 8000:
+            output = summary(objective, text)
+            return output
+        else:
+            return text
+    else:
+        print(f'HTTP request failed with status code {response.status_code}')
