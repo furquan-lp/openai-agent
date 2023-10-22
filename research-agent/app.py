@@ -17,6 +17,7 @@ import requests
 import json
 import streamlit as sl
 from langchain.schema import SystemMessage
+from fastapi import FastAPI
 
 load_dotenv()
 browserless_api_key = os.getenv('AGENT_BROWSERLESS_API')
@@ -153,7 +154,7 @@ agent = initialize_agent(
     memory=memory,
 )
 
-# Comment this out later on, for Streamlit testing ONLY
+""" # Comment this out later on, for Streamlit testing ONLY
 def main():
     sl.set_page_config(page_title='AI Researcher App (Testing)', page_icon=':bird:')
 
@@ -167,4 +168,15 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main() """
+
+app = FastAPI()
+
+class Query(BaseModel):
+    query: str
+
+@app.post('/')
+def researchAgent(query: Query):
+    query = query.query
+    content = agent({'input': query})
+    return content['output']
