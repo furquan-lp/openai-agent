@@ -134,3 +134,8 @@ system_message = SystemMessage(
             5/ In the final output, You should include all reference data & links to back up your research; You should include all reference data & links to back up your research
             6/ In the final output, You should include all reference data & links to back up your research; You should include all reference data & links to back up your research"""
 )
+
+agent_kwargs = {
+    'extra_prompt_messages': [MessagesPlaceholder(variable_name='memory')],
+    'system_message': system_message,
+}
