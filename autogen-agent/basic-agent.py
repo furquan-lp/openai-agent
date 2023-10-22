@@ -11,4 +11,4 @@ user_proxy = UserProxyAgent(
     code_execution_config={'work_dir': 'coding'})
 
 user_proxy.initiate_chat(
-    assistant, message='Plot a chart of BYD and TSLA stock price change YTD.')
+    assistant, message='Display a 2D animation of a moving circle using Python.')
