@@ -152,3 +152,19 @@ agent = initialize_agent(
     agent_kwargs=agent_kwargs,
     memory=memory,
 )
+
+# Comment this out later on, for Streamlit testing ONLY
+def main():
+    sl.set_page_config(page_title='AI Researcher', page_icon=':bird:')
+
+    sl.header('AI research agent :bird:')
+    query = sl.text_input('Research goal')
+
+    if query:
+        sl.write('Researching for ', query)
+        result = agent({'input': query})
+        sl.info(result['output'])
+
+
+if __name__ == '__main__':
+    main()
