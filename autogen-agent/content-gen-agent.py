@@ -238,3 +238,11 @@ writing_assistant = autogen.AssistantAgent(
     system_message='You are a writing assistant, you can use research function to collect latest information about a given topic, and then use write_content function to write a very well written content; Reply TERMINATE when your task is done',
     llm_config=llm_config_content_assistant,
 )
+user_proxy = autogen.UserProxyAgent(
+    name='User_proxy',
+    human_input_mode='TERMINATE',
+    function_map={
+        'write_content': write_content,
+        'research': research,
+    }
+)
