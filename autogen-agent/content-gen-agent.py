@@ -71,7 +71,7 @@ def summary(objective, content):
     llm = ChatOpenAI(temperature=0, model='gpt-3.5-turbo-16k-0613')
 
     text_splitter = RecursiveCharacterTextSplitter(
-        separators=["\n\n", "\n"], chunk_size=8000, chunk_overlap=500)
+        separators=['\n\n', '\n'], chunk_size=8000, chunk_overlap=500)
 
     docs = text_splitter.create_documents([content])
     map_prompt = """
@@ -92,3 +92,66 @@ def summary(objective, content):
 
     output = summary_chain.run(input_documents=docs, objective=objective)
     return output
+
+
+def research(query):
+    llm_config_researcher = {
+        'functions': [
+            {
+                'name': 'search',
+                'description': 'Google search for relevant information',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'query': {
+                            'type': 'string',
+                            'description': 'Google search for query',
+                        }
+                    },
+                    'required': ['query'],
+                },
+            },
+            {
+                'name': 'scrape_website',
+                'description': 'Scraping website content based on URL',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'url': {
+                            'type': 'string',
+                            'description': 'Scrapes website URL',
+                        }
+                    },
+                    'required': ['url'],
+                },
+            },
+        ],
+        'config_list': config_list}
+
+    researcher = autogen.AssistantAgent(
+        name='researcher',
+        system_message='Research about a given query, collect as many information as possible, and generate detailed research results with loads of technique details with all reference links attached; Add TERMINATE to the end of the research report;',
+        llm_config=llm_config_researcher,
+    )
+    user_proxy = autogen.UserProxyAgent(
+        name='User_proxy',
+        code_execution_config={'last_n_messages': 2, 'work_dir': 'coding'},
+        is_termination_msg=lambda x: x.get('content', '') and x.get(
+            'content', '').rstrip().endswith('TERMINATE'),
+        human_input_mode='TERMINATE',
+        function_map={
+            'search': search,
+            'scrape': scrape_website,
+        }
+    )
+
+    user_proxy.initiate_chat(researcher, message=query)
+    user_proxy.stop_reply_at_receive(researcher)
+    user_proxy.send(
+        'Give me the research report that just generated again, return ONLY the report & reference links', researcher)
+
+    return user_proxy.last_message()['content']
+
+
+result = research('What is Microsoft autogen?')
+print("RES:", result)
