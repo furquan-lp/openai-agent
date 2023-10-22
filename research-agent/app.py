@@ -18,4 +18,25 @@ import json
 import streamlit as sl
 from langchain.schema import SystemMessage
 
-print('done')
+load_dotenv()
+browserless_api_key = os.getenv('AGENT_BROWSERLESS_API')
+serper_api_key = os.getenv('AGENT_SERP_API')
+
+def google_search(query):
+    url = 'https://google.serper.dev/search'
+
+    payload = json.dumps({
+        'q': query
+    })
+
+    headers = {
+        'X-API-KEY': serper_api_key,
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request('POST', url, headers=headers, data=payload)
+
+    print(response.text)
+    return response.text
+
+google_search('What is the speed of light?')
