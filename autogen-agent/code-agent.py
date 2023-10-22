@@ -19,3 +19,11 @@ pm = autogen.AssistantAgent(
     system_message='You will help break down the initial idea into a well scoped requirement for the coder; Do not involve in future conversations or error fixing',
     llm_config=llm_config,
 )
+
+group_chat = autogen.GroupChat(
+    agents=[user_proxy, coder, pm], messages=[])
+manager = autogen.GroupChatManager(groupchat=group_chat, llm_config=llm_config)
+
+# Prompt here
+user_proxy.initiate_chat(
+    manager, message='Build a basic pong game for 2 players in python')
