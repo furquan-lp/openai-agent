@@ -246,3 +246,6 @@ user_proxy = autogen.UserProxyAgent(
         'research': research,
     }
 )
+
+user_proxy.initiate_chat(
+    writing_assistant, message='Write a blog post about potential LLMs beyond GPT4')
