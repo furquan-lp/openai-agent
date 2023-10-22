@@ -155,9 +155,9 @@ agent = initialize_agent(
 
 # Comment this out later on, for Streamlit testing ONLY
 def main():
-    sl.set_page_config(page_title='AI Researcher', page_icon=':bird:')
+    sl.set_page_config(page_title='AI Researcher App (Testing)', page_icon=':bird:')
 
-    sl.header('AI research agent :bird:')
+    sl.header('AI Researcher. How can I help you? :smile:')
     query = sl.text_input('Research goal')
 
     if query:
